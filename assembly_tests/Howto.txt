@@ -1,0 +1,6 @@
+Den Programmspeicher incl. Inhalt kann man in folgenden Schritten erzeugen: 
+- Assembler-Programm  (xxx.asm) schreiben.
+- assemblieren (entweder mit AVR-Studio oder mit AVRA
+- mit C-Programm "hex2vhd" Datei pkg_instmem.vhd erstellen, in der Speicherinhalt als Konstante abgelegt ist. 
+- in VHDL-File "prog_mem.vhd" als Template wird das dann nur noch benutzt...
+	- Achtung: ohne Takt wird distributed RAM erzeugt, mit Takt block-RAM...	
