@@ -33,7 +33,8 @@ entity Reg_File is
            data_opb : out STD_LOGIC_VECTOR (7 downto 0);
            data_res : in STD_LOGIC_VECTOR (7 downto 0);
            data_PM : in STD_LOGIC_VECTOR (7 downto 0);
-           sel_immediate: in STD_LOGIC
+           sel_immediate: in STD_LOGIC;
+           alu_sel_immediate: in STD_LOGIC
            );
 end Reg_File;
 
@@ -75,6 +76,7 @@ begin
 
   -- nebenlaeufiges Lesen der Registerspeicher
   data_opa <= register_speicher(to_integer(unsigned(addr_opa)));
-  data_opb <= register_speicher(to_integer(unsigned(addr_opb)));
+  data_opb <= register_speicher(to_integer(unsigned(addr_opb)))
+              when alu_sel_immediate = '0' else data_PM;
   
 end Behavioral;

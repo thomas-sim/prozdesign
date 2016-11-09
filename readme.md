@@ -13,9 +13,9 @@ Coded with love with emacs.
 - [X] SUB
 - [X] DEC
 - [X] INC
-- [ ] LDI
+- [x] LDI
 - [ ] ANDI
-- [ ] SUBI
+- [x] SUBI
 - [ ] MOV
 - [ ] NOP
 - [ ] LSL

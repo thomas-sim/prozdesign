@@ -36,7 +36,8 @@ entity decoder is
     w_e_SREG    : out std_logic_vector(7 downto 0);  -- einzeln Write_enables für SREG - Bits
 
     -- hier kommen noch die ganzen Steuersignale der Multiplexer...
-    sel_immediate : out std_logic       -- Selecteingang für Mux vor RF
+    sel_immediate : out std_logic;       -- Selecteingang für Mux vor RF
+    alu_sel_immediate : out std_logic   -- selecteingang für mux vor ALU
 
     );
 end decoder;
@@ -64,6 +65,7 @@ begin  -- Behavioral
     w_e_regfile   <= '0';
     w_e_SREG      <= "00000000";
     sel_immediate <= '0';
+    alu_sel_immediate <= '0';
 
     case Instr(15 downto 10) is  -- instructions that are coded on the first 6 bytes
       -- todo NOP = add
@@ -110,6 +112,14 @@ begin  -- Behavioral
             w_e_regfile   <= '1';
             w_e_SREG      <= "00000000";
             sel_immediate <= '1';
+          -- SUBI
+          when "0101" =>
+            addr_opa    <= '1' & Instr(7 downto 4);
+            addr_opb    <= Instr(9) & Instr (3 downto 0);
+            OPCODE      <= op_sub;
+            w_e_regfile <= '1';
+            w_e_SREG    <= "00111111";
+            alu_sel_immediate <= '1';
           -- RJMP
           when "1100" =>
             null;
@@ -132,9 +142,9 @@ begin  -- Behavioral
                     addr_opa    <= Instr(8 downto 4);
                     OPCODE      <= op_inc;
                     w_e_regfile <= '1';
-                    -- todo inc
+                  -- todo inc
                   when others =>
-                    null; -- Ici, com asr, lsr
+                    null;               -- Ici, com asr, lsr
                 end case;
               when others =>
                 null;
