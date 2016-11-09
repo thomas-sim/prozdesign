@@ -1,8 +1,10 @@
 ; test pour les opérations add, sub, dec, inc
 
-inc r1
-inc r1
-inc r2
-add r1, r2
-sub r1, r2
+ldi r16, $00
+ldi r17, $00
+inc r16
+inc r16
+inc r17
+add r16, r17
+sub r16, r17
 

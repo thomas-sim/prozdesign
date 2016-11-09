@@ -6,7 +6,7 @@
 -- Author     : Burkart Voss  <bvoss@Troubadix>
 -- Company    : 
 -- Created    : 2015-06-23
--- Last update: 2016-11-08
+-- Last update: 2016-11-09
 -- Platform   : 
 -- Standard   : VHDL'87
 -------------------------------------------------------------------------------
@@ -132,7 +132,7 @@ begin  -- Behavioral
                     addr_opa    <= Instr(8 downto 4);
                     OPCODE      <= op_inc;
                     w_e_regfile <= '1';
-
+                    -- todo inc
                   when others =>
                     null; -- Ici, com asr, lsr
                 end case;
