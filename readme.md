@@ -14,12 +14,12 @@ Coded with love with emacs.
 - [X] DEC
 - [X] INC
 - [x] LDI
-- [ ] ANDI
+- [X] ANDI
 - [x] SUBI
 - [ ] MOV
 - [ ] NOP
-- [ ] LSL
-- [ ] CP
+- [X] LSL
+- [X] CP
 - [ ] ROL
 - [ ] ADC
 - [ ] EOR

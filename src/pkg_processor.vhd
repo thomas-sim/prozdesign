@@ -13,4 +13,7 @@ package pkg_processor is
   constant op_and : std_logic_vector(3 downto 0) := "0100"; -- bitwise AND
   constant op_dec : std_logic_vector(3 downto 0) := "0101"; -- decrement
   constant op_inc : std_logic_vector(3 downto 0) := "0111"; -- increment
+
+  constant op_lsr : std_logic_vector(3 downto 0) := "1000"; -- logical shift right
+
 end pkg_processor;

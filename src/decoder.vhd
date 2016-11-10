@@ -6,7 +6,7 @@
 -- Author     : Burkart Voss  <bvoss@Troubadix>
 -- Company    : 
 -- Created    : 2015-06-23
--- Last update: 2016-11-09
+-- Last update: 2016-11-10
 -- Platform   : 
 -- Standard   : VHDL'87
 -------------------------------------------------------------------------------
@@ -68,16 +68,23 @@ begin  -- Behavioral
     alu_sel_immediate <= '0';
 
     case Instr(15 downto 10) is  -- instructions that are coded on the first 6 bytes
-      -- todo NOP = add
+      -- NOP = add
       when "000000" =>
-        null;
-
+        addr_opa    <= Instr(8 downto 4);
+        addr_opb    <= Instr(9) & Instr (3 downto 0);
+        OPCODE      <= op_NOP;
       -- ADD
       when "000011" =>
         addr_opa    <= Instr(8 downto 4);
         addr_opb    <= Instr(9) & Instr (3 downto 0);
         OPCODE      <= op_add;
         w_e_regfile <= '1';
+        w_e_SREG    <= "00111111";
+        -- CP : basically SUB but without register write enable
+      when "000101" =>
+        addr_opa    <= Instr(8 downto 4);
+        addr_opb    <= Instr(9) & Instr (3 downto 0);
+        OPCODE      <= op_sub;
         w_e_SREG    <= "00111111";
       -- SUB
       when "000110" =>
@@ -120,6 +127,20 @@ begin  -- Behavioral
             w_e_regfile <= '1';
             w_e_SREG    <= "00111111";
             alu_sel_immediate <= '1';
+          when "0110" => -- ORI
+            addr_opa      <= '1' & Instr(7 downto 4);
+            addr_opb      <= Instr(9) & Instr (3 downto 0);
+            OPCODE        <= op_or;
+            w_e_regfile   <= '1';
+            w_e_SREG      <= "00011110";
+            alu_sel_immediate <= '1';
+          when "0111" => -- ANDI
+            addr_opa      <= '1' & Instr(7 downto 4);
+            addr_opb      <= Instr(9) & Instr (3 downto 0);
+            OPCODE        <= op_and;
+            w_e_regfile   <= '1';
+            w_e_SREG      <= "00011110";
+            alu_sel_immediate <= '1';
           -- RJMP
           when "1100" =>
             null;
@@ -142,9 +163,14 @@ begin  -- Behavioral
                     addr_opa    <= Instr(8 downto 4);
                     OPCODE      <= op_inc;
                     w_e_regfile <= '1';
-                  -- todo inc
+                    w_e_SREG <= "00011110";
+                  when "0110" => -- LSR
+                    addr_opa    <= Instr(8 downto 4);
+                    OPCODE      <= op_lsr;
+                    w_e_regfile <= '1';
+                    w_e_SREG <= "00011111";
                   when others =>
-                    null;               -- Ici, com asr, lsr
+                    null;               -- Ici, com asr 
                 end case;
               when others =>
                 null;

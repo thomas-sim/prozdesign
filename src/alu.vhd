@@ -63,6 +63,8 @@ begin
         erg <= std_logic_vector(unsigned(OPA) - 1);
       when op_inc =>
         erg <= std_logic_vector(unsigned(OPA) + 1);        
+      when op_lsr =>
+        erg <= std_logic_vector(unsigned(OPA) sla 1); -- logical shift right
       when others => null;
     end case;
   end process kern_ALU;
@@ -100,7 +102,10 @@ begin
         v <=(not OPA(7) and OPA(6) and OPA(5) and OPA(4) and OPA(3) and OPA(2) and OPA(1) and OPA(0));
       when op_inc =>
         v<=(OPA(7) and (not OPA(6)) and (not OPA(5)) and (not OPA(4)) and (not OPA(3)) and (not OPA(2)) and (not OPA(2)) and (not OPA(1)) and (not OPA(0)));
-
+      when op_lsr =>
+        n <= '0';
+        c <= OPA(0);
+        v <= n and c;
       -- alle anderen Operationen...
 
       when others => null;
