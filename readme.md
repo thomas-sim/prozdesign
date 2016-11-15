@@ -6,6 +6,11 @@ The project is made to work with Vivado WebDesign Suite and the xc7a35tcpg236-1 
 
 Coded with love with emacs.
 
+# next todos
+
+- put mux into toplevel
+- implement branchs
+
 # Instructions to implement
 
 - [X] AND
