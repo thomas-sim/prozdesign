@@ -6,7 +6,7 @@
 -- Author     : Burkart Voss  <bvoss@Troubadix>
 -- Company    : 
 -- Created    : 2015-06-23
--- Last update: 2016-11-10
+-- Last update: 2016-11-15
 -- Platform   : 
 -- Standard   : VHDL'87
 -------------------------------------------------------------------------------
@@ -34,6 +34,10 @@ entity decoder is
     OPCODE      : out std_logic_vector(3 downto 0);  -- Opcode für ALU
     w_e_regfile : out std_logic;        -- write enable for Registerfile
     w_e_SREG    : out std_logic_vector(7 downto 0);  -- einzeln Write_enables für SREG - Bits
+
+    offset_pc : out std_logic_vector(11 downto 0); -- the offset of the pc
+                                                   -- counter. Default
+                                                   -- behaviour = 0
 
     -- hier kommen noch die ganzen Steuersignale der Multiplexer...
     sel_immediate : out std_logic;       -- Selecteingang für Mux vor RF
@@ -66,13 +70,10 @@ begin  -- Behavioral
     w_e_SREG      <= "00000000";
     sel_immediate <= '0';
     alu_sel_immediate <= '0';
+    offset_pc <= "000000000000";
 
     case Instr(15 downto 10) is  -- instructions that are coded on the first 6 bytes
-      -- NOP = add
-      when "000000" =>
-        addr_opa    <= Instr(8 downto 4);
-        addr_opb    <= Instr(9) & Instr (3 downto 0);
-        OPCODE      <= op_NOP;
+      -- NOP doesn't need to be implemented : it's the default behaviour
       -- ADD
       when "000011" =>
         addr_opa    <= Instr(8 downto 4);
@@ -107,43 +108,41 @@ begin  -- Behavioral
         OPCODE      <= op_and;
         w_e_regfile <= '1';
         w_e_SREG    <= "00011110";
-
+      -- LD (Z)
+      when "1000000" =>
+        null;
       when others =>
         case Instr(15 downto 12) is  -- instructions that are coded on the first
           -- 4 bytes
           -- LDI
           when "1110" =>
             addr_opa      <= '1' & Instr(7 downto 4);
-            addr_opb      <= Instr(9) & Instr (3 downto 0);
-            OPCODE        <= op_add;
+            OPCODE        <= op_add; -- TODO nécessaire ?
             w_e_regfile   <= '1';
             w_e_SREG      <= "00000000";
             sel_immediate <= '1';
           -- SUBI
           when "0101" =>
             addr_opa    <= '1' & Instr(7 downto 4);
-            addr_opb    <= Instr(9) & Instr (3 downto 0);
             OPCODE      <= op_sub;
             w_e_regfile <= '1';
             w_e_SREG    <= "00111111";
             alu_sel_immediate <= '1';
           when "0110" => -- ORI
             addr_opa      <= '1' & Instr(7 downto 4);
-            addr_opb      <= Instr(9) & Instr (3 downto 0);
             OPCODE        <= op_or;
             w_e_regfile   <= '1';
             w_e_SREG      <= "00011110";
             alu_sel_immediate <= '1';
           when "0111" => -- ANDI
             addr_opa      <= '1' & Instr(7 downto 4);
-            addr_opb      <= Instr(9) & Instr (3 downto 0);
             OPCODE        <= op_and;
             w_e_regfile   <= '1';
             w_e_SREG      <= "00011110";
             alu_sel_immediate <= '1';
           -- RJMP
           when "1100" =>
-            null;
+            offset_pc <= Instr(11 downto 0);
           -- RCALL
           when "1101"=>
             null;

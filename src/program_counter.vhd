@@ -32,6 +32,7 @@ entity Program_Counter is
   port (
     reset : in  std_logic;
     clk   : in  std_logic;
+    offset_pc : in std_logic_vector (11 downto 0);
     Addr  : out std_logic_vector (8 downto 0));
 end Program_Counter;
 
@@ -46,7 +47,7 @@ begin
       if reset = '1' then               -- synchronous reset (active high)
         PC_reg <= "000000000";
       else
-        PC_reg <= std_logic_vector(unsigned(PC_reg) + 1);
+        PC_reg <= std_logic_vector(unsigned(PC_reg) + signed(offset_pc) + 1);
       end if;
     end if;
   end process count;

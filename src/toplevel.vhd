@@ -67,6 +67,7 @@ architecture Behavioral of toplevel is
   signal w_e_regfile       : std_logic;
   signal sel_immediate     : std_logic;
   signal alu_sel_immediate : std_logic;
+  signal offset_pc         : std_logic_vector(11 downto 0);
 
   -- outputs of Regfile
   signal data_opa : std_logic_vector (7 downto 0);
@@ -82,9 +83,10 @@ architecture Behavioral of toplevel is
 
   component Program_Counter
     port (
-      reset : in  std_logic;
-      clk   : in  std_logic;
-      Addr  : out std_logic_vector (8 downto 0));
+      reset     : in  std_logic;
+      clk       : in  std_logic;
+      offset_pc : in  std_logic_vector (11 downto 0);
+      Addr      : out std_logic_vector (8 downto 0));
   end component;
 
   component prog_mem
@@ -102,6 +104,7 @@ architecture Behavioral of toplevel is
       OPCODE            : out std_logic_vector(3 downto 0);
       w_e_regfile       : out std_logic;
       w_e_SREG          : out std_logic_vector(7 downto 0);
+      offset_pc         : out std_logic_vector(11 downto 0);
       sel_immediate     : out std_logic;
       alu_sel_immediate : out std_logic);
   end component;
@@ -151,28 +154,28 @@ begin
   -- instance "decoder_1"
   decoder_1 : decoder
     port map (
-      Instr         => Instr,
-      addr_opa      => addr_opa,
-      addr_opb      => addr_opb,
-      OPCODE        => OPCODE,
-      w_e_regfile   => w_e_regfile,
-      w_e_SREG      => w_e_SREG,
-      sel_immediate => sel_immediate,
+      Instr             => Instr,
+      addr_opa          => addr_opa,
+      addr_opb          => addr_opb,
+      OPCODE            => OPCODE,
+      w_e_regfile       => w_e_regfile,
+      w_e_SREG          => w_e_SREG,
+      sel_immediate     => sel_immediate,
       alu_sel_immediate => alu_sel_immediate);
 
   -- instance "Reg_File_1"
 
   Reg_File_1 : Reg_File
     port map (
-      clk           => clk,
-      addr_opa      => addr_opa,
-      addr_opb      => addr_opb,
-      w_e_regfile   => w_e_regfile,
-      data_opa      => data_opa,
-      data_opb      => data_opb,
-      data_res      => data_res,
-      data_pm       => PM_Data,
-      sel_immediate => sel_immediate,
+      clk               => clk,
+      addr_opa          => addr_opa,
+      addr_opb          => addr_opb,
+      w_e_regfile       => w_e_regfile,
+      data_opa          => data_opa,
+      data_opb          => data_opb,
+      data_res          => data_res,
+      data_pm           => PM_Data,
+      sel_immediate     => sel_immediate,
       alu_sel_immediate => alu_sel_immediate);
 
   -- instance "ALU_1"
