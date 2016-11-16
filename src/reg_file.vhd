@@ -31,11 +31,7 @@ entity Reg_File is
            w_e_regfile : in STD_LOGIC;
            data_opa : out STD_LOGIC_VECTOR (7 downto 0);
            data_opb : out STD_LOGIC_VECTOR (7 downto 0);
-           data_res : in STD_LOGIC_VECTOR (7 downto 0);
-           data_PM : in STD_LOGIC_VECTOR (7 downto 0);
-           sel_immediate: in STD_LOGIC;
-           alu_sel_immediate: in STD_LOGIC
-           );
+           data_in : in STD_LOGIC_VECTOR (7 downto 0));
 end Reg_File;
 
 -- ACHTUNG!!! So einfach wird das mit dem Registerfile am Ende nicht.
@@ -45,22 +41,8 @@ end Reg_File;
 architecture Behavioral of Reg_File is
   type regs is array(31 downto 0) of std_logic_vector(7 downto 0); 
   signal register_speicher:regs;
-  signal data_in : std_logic_vector(7 downto 0);
 begin
 
-  -- purpose: Eingangsmultiplexer fuer Immediate-Befehle
-  -- type   : combinational
-  -- inputs : data_res, data_PM, sel_immediate
-  -- outputs: data_in
-  eingangsmux: process (data_res, data_PM, sel_immediate)
-  begin  -- process eingangsmux
-    if sel_immediate = '1' then
-      data_in <= data_PM;
-    else
-      data_in <= data_res;
-    end if;
-  end process eingangsmux;
-  
   -- purpose: einfacher Schreibprozess für rudimentaeres Registerfile
   -- type   : sequential
   -- inputs : clk, addr_opa, w_e_regfile, data_res
@@ -76,7 +58,6 @@ begin
 
   -- nebenlaeufiges Lesen der Registerspeicher
   data_opa <= register_speicher(to_integer(unsigned(addr_opa)));
-  data_opb <= register_speicher(to_integer(unsigned(addr_opb)))
-              when alu_sel_immediate = '0' else data_PM;
+  data_opb <= register_speicher(to_integer(unsigned(addr_opb)));
   
 end Behavioral;

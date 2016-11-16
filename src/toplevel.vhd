@@ -72,11 +72,16 @@ architecture Behavioral of toplevel is
   -- outputs of Regfile
   signal data_opa : std_logic_vector (7 downto 0);
   signal data_opb : std_logic_vector (7 downto 0);
+
+  -- output of ALU
   signal data_res : std_logic_vector(7 downto 0);
 
   -- auxiliary signals
   signal PM_data : std_logic_vector(7 downto 0);  -- used for wiring immediate data
-
+  signal input_alu_opb : std_logic_vector(7 downto 0); -- output of
+                                                   -- alu_sel_immediate multiplexer
+  signal input_data_reg : std_logic_vector(7 downto 0); -- output of input reg
+                                                        -- multiplexer
   -----------------------------------------------------------------------------
   -- Component declarations
   -----------------------------------------------------------------------------
@@ -117,10 +122,7 @@ architecture Behavioral of toplevel is
       w_e_regfile       : in  std_logic;
       data_opa          : out std_logic_vector (7 downto 0);
       data_opb          : out std_logic_vector (7 downto 0);
-      data_res          : in  std_logic_vector (7 downto 0);
-      data_pm           : in  std_logic_vector (7 downto 0);
-      sel_immediate     : in  std_logic;
-      alu_sel_immediate : in  std_logic);
+      data_in           : in  std_logic_vector (7 downto 0));
   end component;
 
   component ALU
@@ -142,6 +144,7 @@ begin
   Program_Counter_1 : Program_Counter
     port map (
       reset => reset,
+      offset_pc => offset_pc,
       clk   => clk,
       Addr  => Addr);
 
@@ -158,10 +161,10 @@ begin
       addr_opa          => addr_opa,
       addr_opb          => addr_opb,
       OPCODE            => OPCODE,
+      offset_pc => offset_pc,
       w_e_regfile       => w_e_regfile,
       w_e_SREG          => w_e_SREG,
-      sel_immediate     => sel_immediate,
-      alu_sel_immediate => alu_sel_immediate);
+      sel_immediate     => sel_immediate);
 
   -- instance "Reg_File_1"
 
@@ -173,20 +176,23 @@ begin
       w_e_regfile       => w_e_regfile,
       data_opa          => data_opa,
       data_opb          => data_opb,
-      data_res          => data_res,
-      data_pm           => PM_Data,
-      sel_immediate     => sel_immediate,
-      alu_sel_immediate => alu_sel_immediate);
+      data_in           => data_res);
 
   -- instance "ALU_1"
   ALU_1 : ALU
     port map (
       OPCODE => OPCODE,
       OPA    => data_opa,
-      OPB    => data_opb,
+      OPB    => input_alu_opb,
       RES    => data_res,
       Status => Status);
 
   PM_Data <= Instr(11 downto 8)&Instr(3 downto 0);
+
+  input_alu_opb <= data_opb when alu_sel_immediate = '0'
+                   else PM_Data;
+
+  input_data_reg <= PM_Data when sel_immediate = '1'
+             else data_res;
 
 end Behavioral;
