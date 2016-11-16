@@ -23,6 +23,7 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use ieee.numeric_std.all;
+
 library work;
 use work.pkg_processor.all;
 
@@ -64,7 +65,7 @@ begin
       when op_inc =>
         erg <= std_logic_vector(unsigned(OPA) + 1);        
       when op_lsr =>
-        erg <= std_logic_vector(unsigned(OPA) sla 1); -- logical shift right
+        erg <= '0' & OPA(7 downto 1); -- right logical shift
       when others => null;
     end case;
   end process kern_ALU;
