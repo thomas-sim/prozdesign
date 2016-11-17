@@ -21,6 +21,7 @@
 
 library ieee;
 use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 library work;
 use work.pkg_processor.all;
 
@@ -74,7 +75,7 @@ begin  -- Behavioral
     alu_sel_immediate <= '0';
     offset_pc         <= "000000000000";
 
-    index_branches := integer(Instr(2 downto 0));
+    index_branches := to_integer(unsigned(Instr(2 downto 0)));
 
     case Instr(15 downto 10) is  -- instructions that are coded on the first 6 bytes
       -- NOP doesn't need to be implemented : it's the default behaviour
@@ -114,8 +115,14 @@ begin  -- Behavioral
         w_e_SREG    <= "00011110";
       -- BRBS
       when "111100" =>
-
-        null;
+        if sreg(to_integer(unsigned(Instr(2 downto 0)))) = '1' then
+          offset_pc <= "00000" & Instr(9 downto 3);
+        end if;
+      -- BRBC
+      when "111101" =>
+        if sreg(to_integer(unsigned(Instr(2 downto 0)))) = '0' then
+          offset_pc <= "00000" & Instr(9 downto 3);
+        end if;
       -- LD (Z)
       when "1000000" =>
         null;
