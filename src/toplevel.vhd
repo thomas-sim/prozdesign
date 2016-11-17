@@ -65,6 +65,7 @@ architecture Behavioral of toplevel is
   signal addr_opb          : std_logic_vector(4 downto 0);
   signal OPCODE            : std_logic_vector(3 downto 0);
   signal w_e_regfile       : std_logic;
+  signal w_e_SREG_dec : std_logic_vector(7 downto 0);
   signal sel_immediate     : std_logic;
   signal alu_sel_immediate : std_logic;
   signal offset_pc         : std_logic_vector(11 downto 0);
@@ -72,9 +73,11 @@ architecture Behavioral of toplevel is
   -- outputs of Regfile
   signal data_opa : std_logic_vector (7 downto 0);
   signal data_opb : std_logic_vector (7 downto 0);
+  signal sreg : std_logic_vector(7 downto 0);
 
   -- output of ALU
   signal data_res : std_logic_vector(7 downto 0);
+  signal status_alu : std_logic_vector(7 downto 0);
 
   -- auxiliary signals
   signal PM_data : std_logic_vector(7 downto 0);  -- used for wiring immediate data
@@ -104,26 +107,30 @@ architecture Behavioral of toplevel is
   component decoder
     port (
       Instr             : in  std_logic_vector(15 downto 0);
+      sreg : in std_logic_vector(7 downto 0);
       addr_opa          : out std_logic_vector(4 downto 0);
       addr_opb          : out std_logic_vector(4 downto 0);
       OPCODE            : out std_logic_vector(3 downto 0);
       w_e_regfile       : out std_logic;
-      w_e_SREG          : out std_logic_vector(7 downto 0);
+      w_e_SREG         : out std_logic_vector(7 downto 0);
       offset_pc         : out std_logic_vector(11 downto 0);
       sel_immediate     : out std_logic;
       alu_sel_immediate : out std_logic);
   end component;
 
-  component Reg_File
+  component Reg_File is
     port (
-      clk               : in  std_logic;
-      addr_opa          : in  std_logic_vector (4 downto 0);
-      addr_opb          : in  std_logic_vector (4 downto 0);
-      w_e_regfile       : in  std_logic;
-      data_opa          : out std_logic_vector (7 downto 0);
-      data_opb          : out std_logic_vector (7 downto 0);
-      data_in           : in  std_logic_vector (7 downto 0));
-  end component;
+      clk         : in  STD_LOGIC;
+      addr_opa    : in  STD_LOGIC_VECTOR (4 downto 0);
+      addr_opb    : in  STD_LOGIC_VECTOR (4 downto 0);
+      w_e_SREG    : in  std_logic_vector (7 downto 0);
+      status_alu  : in  std_logic_vector (7 downto 0);
+      w_e_regfile : in  STD_LOGIC;
+      data_opa    : out STD_LOGIC_VECTOR (7 downto 0);
+      data_opb    : out STD_LOGIC_VECTOR (7 downto 0);
+      data_in     : in  STD_LOGIC_VECTOR (7 downto 0);
+      sreg        : out std_logic_vector(7 downto 0));
+  end component Reg_File;
 
   component ALU
     port (
@@ -158,12 +165,13 @@ begin
   decoder_1 : decoder
     port map (
       Instr             => Instr,
+      sreg => sreg,
       addr_opa          => addr_opa,
       addr_opb          => addr_opb,
       OPCODE            => OPCODE,
       offset_pc => offset_pc,
       w_e_regfile       => w_e_regfile,
-      w_e_SREG          => w_e_SREG,
+      w_e_SREG         => w_e_SREG_dec,
       sel_immediate     => sel_immediate);
 
   -- instance "Reg_File_1"
@@ -173,10 +181,13 @@ begin
       clk               => clk,
       addr_opa          => addr_opa,
       addr_opb          => addr_opb,
+      w_e_SREG => w_e_SREG_dec,
+      status_alu => status_alu,
       w_e_regfile       => w_e_regfile,
       data_opa          => data_opa,
       data_opb          => data_opb,
-      data_in           => data_res);
+      data_in           => data_res,
+      sreg => sreg);
 
   -- instance "ALU_1"
   ALU_1 : ALU
@@ -185,7 +196,7 @@ begin
       OPA    => data_opa,
       OPB    => input_alu_opb,
       RES    => data_res,
-      Status => Status);
+      Status => status_alu);
 
   PM_Data <= Instr(11 downto 8)&Instr(3 downto 0);
 
@@ -195,4 +206,6 @@ begin
   input_data_reg <= PM_Data when sel_immediate = '1'
              else data_res;
 
+  Status <= status_alu;
+  w_e_SREG <= w_e_SREG_dec;
 end Behavioral;

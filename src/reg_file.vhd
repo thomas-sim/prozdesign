@@ -28,10 +28,13 @@ entity Reg_File is
     Port ( clk: in STD_LOGIC;
            addr_opa : in STD_LOGIC_VECTOR (4 downto 0);
            addr_opb : in STD_LOGIC_VECTOR (4 downto 0);
+           w_e_SREG : in std_logic_vector (7 downto 0);
+           status_alu : in std_logic_vector (7 downto 0);
            w_e_regfile : in STD_LOGIC;
            data_opa : out STD_LOGIC_VECTOR (7 downto 0);
            data_opb : out STD_LOGIC_VECTOR (7 downto 0);
-           data_in : in STD_LOGIC_VECTOR (7 downto 0));
+           data_in : in STD_LOGIC_VECTOR (7 downto 0);
+           sreg : out std_logic_vector(7 downto 0));
 end Reg_File;
 
 -- ACHTUNG!!! So einfach wird das mit dem Registerfile am Ende nicht.
@@ -53,6 +56,7 @@ begin
       if w_e_regfile = '1' then
         register_speicher(to_integer(unsigned(addr_opa))) <= data_in;
       end if;
+      sreg <= w_e_SREG and status_alu;
     end if;
   end process registerfile;
 
