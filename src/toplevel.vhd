@@ -65,7 +65,7 @@ architecture Behavioral of toplevel is
   signal addr_opb          : std_logic_vector(4 downto 0);
   signal OPCODE            : std_logic_vector(3 downto 0);
   signal w_e_regfile       : std_logic;
-  signal w_e_SREG_dec : std_logic_vector(7 downto 0);
+  signal w_e_SREG_dec      : std_logic_vector(7 downto 0);
   signal sel_immediate     : std_logic;
   signal alu_sel_immediate : std_logic;
   signal offset_pc         : std_logic_vector(11 downto 0);
@@ -73,18 +73,18 @@ architecture Behavioral of toplevel is
   -- outputs of Regfile
   signal data_opa : std_logic_vector (7 downto 0);
   signal data_opb : std_logic_vector (7 downto 0);
-  signal sreg : std_logic_vector(7 downto 0);
+  signal sreg     : std_logic_vector(7 downto 0);
 
   -- output of ALU
-  signal data_res : std_logic_vector(7 downto 0);
+  signal data_res   : std_logic_vector(7 downto 0);
   signal status_alu : std_logic_vector(7 downto 0);
 
   -- auxiliary signals
-  signal PM_data : std_logic_vector(7 downto 0);  -- used for wiring immediate data
-  signal input_alu_opb : std_logic_vector(7 downto 0); -- output of
-                                                   -- alu_sel_immediate multiplexer
-  signal input_data_reg : std_logic_vector(7 downto 0); -- output of input reg
-                                                        -- multiplexer
+  signal PM_data        : std_logic_vector(7 downto 0);  -- used for wiring immediate data
+  signal input_alu_opb  : std_logic_vector(7 downto 0);  -- output of
+                                        -- alu_sel_immediate multiplexer
+  signal input_data_reg : std_logic_vector(7 downto 0);  -- output of input reg
+                                                         -- multiplexer
   -----------------------------------------------------------------------------
   -- Component declarations
   -----------------------------------------------------------------------------
@@ -107,12 +107,12 @@ architecture Behavioral of toplevel is
   component decoder
     port (
       Instr             : in  std_logic_vector(15 downto 0);
-      sreg : in std_logic_vector(7 downto 0);
+      sreg              : in  std_logic_vector(7 downto 0);
       addr_opa          : out std_logic_vector(4 downto 0);
       addr_opb          : out std_logic_vector(4 downto 0);
       OPCODE            : out std_logic_vector(3 downto 0);
       w_e_regfile       : out std_logic;
-      w_e_SREG         : out std_logic_vector(7 downto 0);
+      w_e_SREG          : out std_logic_vector(7 downto 0);
       offset_pc         : out std_logic_vector(11 downto 0);
       sel_immediate     : out std_logic;
       alu_sel_immediate : out std_logic);
@@ -120,16 +120,13 @@ architecture Behavioral of toplevel is
 
   component Reg_File is
     port (
-      clk         : in  STD_LOGIC;
-      addr_opa    : in  STD_LOGIC_VECTOR (4 downto 0);
-      addr_opb    : in  STD_LOGIC_VECTOR (4 downto 0);
-      w_e_SREG    : in  std_logic_vector (7 downto 0);
-      status_alu  : in  std_logic_vector (7 downto 0);
-      w_e_regfile : in  STD_LOGIC;
-      data_opa    : out STD_LOGIC_VECTOR (7 downto 0);
-      data_opb    : out STD_LOGIC_VECTOR (7 downto 0);
-      data_in     : in  STD_LOGIC_VECTOR (7 downto 0);
-      sreg        : out std_logic_vector(7 downto 0));
+      clk         : in  std_logic;
+      addr_opa    : in  std_logic_vector (4 downto 0);
+      addr_opb    : in  std_logic_vector (4 downto 0);
+      w_e_regfile : in  std_logic;
+      data_opa    : out std_logic_vector (7 downto 0);
+      data_opb    : out std_logic_vector (7 downto 0);
+      data_in     : in  std_logic_vector (7 downto 0));
   end component Reg_File;
 
   component ALU
@@ -150,10 +147,10 @@ begin
   -- instance "Program_Counter_1"
   Program_Counter_1 : Program_Counter
     port map (
-      reset => reset,
+      reset     => reset,
       offset_pc => offset_pc,
-      clk   => clk,
-      Addr  => Addr);
+      clk       => clk,
+      Addr      => Addr);
 
   -- instance "prog_mem_1"
   prog_mem_1 : prog_mem
@@ -164,30 +161,27 @@ begin
   -- instance "decoder_1"
   decoder_1 : decoder
     port map (
-      Instr             => Instr,
-      sreg => sreg,
-      addr_opa          => addr_opa,
-      addr_opb          => addr_opb,
-      OPCODE            => OPCODE,
-      offset_pc => offset_pc,
-      w_e_regfile       => w_e_regfile,
-      w_e_SREG         => w_e_SREG_dec,
-      sel_immediate     => sel_immediate);
+      Instr         => Instr,
+      sreg          => sreg,
+      addr_opa      => addr_opa,
+      addr_opb      => addr_opb,
+      OPCODE        => OPCODE,
+      offset_pc     => offset_pc,
+      w_e_regfile   => w_e_regfile,
+      w_e_SREG      => w_e_SREG_dec,
+      sel_immediate => sel_immediate);
 
   -- instance "Reg_File_1"
 
   Reg_File_1 : Reg_File
     port map (
-      clk               => clk,
-      addr_opa          => addr_opa,
-      addr_opb          => addr_opb,
-      w_e_SREG => w_e_SREG_dec,
-      status_alu => status_alu,
-      w_e_regfile       => w_e_regfile,
-      data_opa          => data_opa,
-      data_opb          => data_opb,
-      data_in           => data_res,
-      sreg => sreg);
+      clk         => clk,
+      addr_opa    => addr_opa,
+      addr_opb    => addr_opb,
+      w_e_regfile => w_e_regfile,
+      data_opa    => data_opa,
+      data_opb    => data_opb,
+      data_in     => input_data_reg);
 
   -- instance "ALU_1"
   ALU_1 : ALU
@@ -204,8 +198,16 @@ begin
                    else PM_Data;
 
   input_data_reg <= PM_Data when sel_immediate = '1'
-             else data_res;
+                    else data_res;
 
-  Status <= status_alu;
+  -- sreg <= (not(w_e_SREG_dec) and sreg) or (w_e_SREG 
+  sreg_process: process (clk)
+  begin
+    if clk'event and clk = '1' then
+      sreg <= (not(w_e_SREG_dec) and sreg) or (w_e_SREG_dec and status_alu);
+    end if;
+  end process sreg_process;
+                       
+  Status   <= status_alu;
   w_e_SREG <= w_e_SREG_dec;
 end Behavioral;

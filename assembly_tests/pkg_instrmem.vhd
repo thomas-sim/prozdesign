@@ -7,8 +7,9 @@ package pkg_instrmem is
 
 	type t_instrMem   is array(0 to 512-1) of std_logic_vector(15 downto 0);
 	constant PROGMEM : t_instrMem := (
-		"1110000000001001",
-		"0101000000000101",
+		"1110000000000111",
+		"1001010100001010",
+		"1111011111110010",
 		
 		others => (others => '0')
 	);

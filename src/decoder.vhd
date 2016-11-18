@@ -6,7 +6,7 @@
 -- Author     : Burkart Voss  <bvoss@Troubadix>
 -- Company    : 
 -- Created    : 2015-06-23
--- Last update: 2016-11-17
+-- Last update: 2016-11-18
 -- Platform   : 
 -- Standard   : VHDL'87
 -------------------------------------------------------------------------------
@@ -116,7 +116,7 @@ begin  -- Behavioral
       -- BRBS
       when "111100" =>
         if sreg(to_integer(unsigned(Instr(2 downto 0)))) = '1' then
-          offset_pc <= "00000" & Instr(9 downto 3);
+          offset_pc <= "00000" & Instr(9 downto 3); -- TODO
         end if;
       -- BRBC
       when "111101" =>
@@ -124,7 +124,7 @@ begin  -- Behavioral
           offset_pc <= "00000" & Instr(9 downto 3);
         end if;
       -- LD (Z)
-      when "1000000" =>
+      when "100000" =>
         null;
       when others =>
         case Instr(15 downto 12) is  -- instructions that are coded on the first
@@ -132,7 +132,6 @@ begin  -- Behavioral
           -- LDI
           when "1110" =>
             addr_opa      <= '1' & Instr(7 downto 4);
-            OPCODE        <= op_add;    -- TODO nécessaire ?
             w_e_regfile   <= '1';
             w_e_SREG      <= "00000000";
             sel_immediate <= '1';
@@ -165,7 +164,7 @@ begin  -- Behavioral
             case Instr(15 downto 9) is  -- instructions that are coded on the
               -- first 7 bytes
               -- DEC and INC
-              -- todo com, asr, lsr
+              -- todo com, asr
               when "1001010" =>
                 case Instr(3 downto 0) is
                   when "1010" =>        -- DEC
