@@ -6,7 +6,7 @@
 -- Author     : Burkart Voss  <bvoss@Troubadix>
 -- Company    : 
 -- Created    : 2015-06-23
--- Last update: 2016-11-18
+-- Last update: 2016-11-20
 -- Platform   : 
 -- Standard   : VHDL'87
 -------------------------------------------------------------------------------
@@ -116,12 +116,13 @@ begin  -- Behavioral
       -- BRBS
       when "111100" =>
         if sreg(to_integer(unsigned(Instr(2 downto 0)))) = '1' then
-          offset_pc <= "00000" & Instr(9 downto 3); -- TODO
+          offset_pc <= "00000" & Instr(9 downto 3); 
+          offset_pc <= std_logic_vector(resize(signed(Instr(9 downto 3)), offset_pc'length));
         end if;
       -- BRBC
       when "111101" =>
         if sreg(to_integer(unsigned(Instr(2 downto 0)))) = '0' then
-          offset_pc <= "00000" & Instr(9 downto 3);
+          offset_pc <= std_logic_vector(resize(signed(Instr(9 downto 3)), offset_pc'length));
         end if;
       -- LD (Z)
       when "100000" =>
