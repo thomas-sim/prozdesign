@@ -28,6 +28,7 @@ use work.pkg_memory.all;
 
 entity data_memory is
   port(clk        : in  std_logic;
+       reset : in std_logic;
        w_e_memory : in  std_logic_vector(3 downto 0);
        data_in    : in  std_logic_vector(7 downto 0);
        addr       : in std_logic_vector (9 downto 0);
@@ -42,8 +43,12 @@ begin
   write_process : process(clk)
   begin
     if clk'event and clk = '1' then
-      if w_e_memory = id_memory then
-        memory_speicher(to_integer(unsigned(addr))) <= data_in;
+      if reset = '1' then
+        memory_speicher <= (others => "00000000");
+      else
+        if w_e_memory = id_memory then
+            memory_speicher(to_integer(unsigned(addr))) <= data_in;
+        end if;
       end if;
     end if;
   end process write_process;

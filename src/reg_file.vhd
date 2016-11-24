@@ -26,6 +26,7 @@ use IEEE.NUMERIC_STD.all;
 
 entity Reg_File is
   port (clk         : in  std_logic;
+        reset : in std_logic;
         addr_opa    : in  std_logic_vector (4 downto 0);
         addr_opb    : in  std_logic_vector (4 downto 0);
         w_e_regfile : in  std_logic;
@@ -52,8 +53,12 @@ begin
   registerfile : process (clk)
   begin  -- process registerfile
     if clk'event and clk = '1' then     -- rising clock edge
-      if w_e_regfile = '1' then
-        register_speicher(to_integer(unsigned(addr_opa))) <= data_in;
+      if reset = '1' then
+        register_speicher <= (others => "00000000");
+      else
+        if w_e_regfile = '1' then
+            register_speicher(to_integer(unsigned(addr_opa))) <= data_in;
+        end if;
       end if;
     end if;
   end process registerfile;

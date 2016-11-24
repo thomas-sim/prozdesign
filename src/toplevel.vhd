@@ -119,6 +119,7 @@ architecture Behavioral of toplevel is
   component data_memory is
     port (
       clk        : in  std_logic;
+      reset : in std_logic;
       w_e_memory : in  std_logic_vector(3 downto 0);
       data_in    : in  std_logic_vector(7 downto 0);
       addr       : in std_logic_vector (9 downto 0);
@@ -152,6 +153,7 @@ architecture Behavioral of toplevel is
   component Reg_File is
     port (
       clk         : in  std_logic;
+      reset : in std_logic;
       addr_opa    : in  std_logic_vector (4 downto 0);
       addr_opb    : in  std_logic_vector (4 downto 0);
       w_e_regfile : in  std_logic;
@@ -210,6 +212,7 @@ begin
   Reg_File_1 : Reg_File
     port map (
       clk         => clk,
+      reset     => reset,
       addr_opa    => addr_opa,
       addr_opb    => addr_opb,
       w_e_regfile => w_e_regfile,
@@ -240,6 +243,7 @@ begin
   data_memory_1: data_memory
     port map (
       clk        => clk,
+      reset     => reset,
       w_e_memory => w_e_memory,
       data_in    => data_opa,
       addr       => addr_memory,
@@ -261,7 +265,11 @@ begin
   sreg_process: process (clk)
   begin
     if clk'event and clk = '1' then
-      sreg <= (not(w_e_SREG_dec) and sreg) or (w_e_SREG_dec and status_alu);
+      if reset = '1' then
+        sreg <= "00000000";
+      else
+        sreg <= (not(w_e_SREG_dec) and sreg) or (w_e_SREG_dec and status_alu);
+      end if;
     end if;
   end process sreg_process;
                        

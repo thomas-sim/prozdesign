@@ -112,6 +112,19 @@ begin  -- Behavioral
         OPCODE      <= op_and;
         w_e_regfile <= '1';
         w_e_SREG    <= "00011110";
+      -- XOR
+      when "001001" =>
+        addr_opa    <= Instr(8 downto 4);
+        addr_opb    <= Instr(9) & Instr (3 downto 0);
+        OPCODE      <= op_xor;
+        w_e_regfile <= '1';
+        w_e_SREG    <= "00011110";
+      -- MOV
+      when "001011" =>
+        addr_opa    <= Instr(8 downto 4);
+        addr_opb    <= Instr(9) & Instr (3 downto 0);
+        w_e_regfile <= '1';
+        regfile_datain_selector <= regfile_data_in_datab;
       -- BRBS
       when "111100" =>
         if sreg(to_integer(unsigned(Instr(2 downto 0)))) = '1' then

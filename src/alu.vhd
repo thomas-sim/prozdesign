@@ -66,6 +66,8 @@ begin
         erg <= std_logic_vector(unsigned(OPA) + 1);        
       when op_lsr =>
         erg <= '0' & OPA(7 downto 1); -- right logical shift
+      when op_xor =>
+        erg <= OPA xor OPB;
       when others => null;
     end case;
   end process kern_ALU;
@@ -107,7 +109,6 @@ begin
         n <= '0';
         c <= OPA(0);
         v <= n and c;
-      -- alle anderen Operationen...
 
       when others => null;
     end case;
