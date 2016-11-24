@@ -16,4 +16,10 @@ package pkg_processor is
 
   constant op_lsr : std_logic_vector(3 downto 0) := "1000"; -- logical shift right
 
+  -- Constants for regfile_data_in_multiplexor
+
+  constant regfile_data_in_alu : std_logic_vector(1 downto 0) := "00";
+  constant regfile_data_in_datab : std_logic_vector(1 downto 0) := "01";
+  constant regfile_data_in_memory : std_logic_vector(1 downto 0) := "10";
+  constant regfile_data_in_instruction : std_logic_vector(1 downto 0) := "11";
 end pkg_processor;

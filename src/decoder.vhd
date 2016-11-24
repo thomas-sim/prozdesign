@@ -6,7 +6,7 @@
 -- Author     : Burkart Voss  <bvoss@Troubadix>
 -- Company    : 
 -- Created    : 2015-06-23
--- Last update: 2016-11-20
+-- Last update: 2016-11-24
 -- Platform   : 
 -- Standard   : VHDL'87
 -------------------------------------------------------------------------------
@@ -29,21 +29,19 @@ use work.pkg_processor.all;
 
 entity decoder is
   port (
-    Instr       : in  std_logic_vector(15 downto 0);  -- Eingang vom Programmspeicher
-    sreg        : in  std_logic_vector(7 downto 0);  -- sreg
-    addr_opa    : out std_logic_vector(4 downto 0);  -- Adresse von 1. Operand
-    addr_opb    : out std_logic_vector(4 downto 0);  -- Adresse von 2. Operand
-    OPCODE      : out std_logic_vector(3 downto 0);  -- Opcode für ALU
-    w_e_regfile : out std_logic;        -- write enable for Registerfile
-    w_e_SREG    : out std_logic_vector(7 downto 0);  -- einzeln Write_enables für SREG - Bits
-
-    offset_pc : out std_logic_vector(11 downto 0);  -- the offset of the pc
-                                                    -- counter. Default
-                                                    -- behaviour = 0
+    Instr              : in  std_logic_vector(15 downto 0);  -- Eingang vom Programmspeicher
+    sreg               : in  std_logic_vector(7 downto 0);  -- sreg
+    addr_opa           : out std_logic_vector(4 downto 0);  -- Adresse von 1. Operand
+    addr_opb           : out std_logic_vector(4 downto 0);  -- Adresse von 2. Operand
+    OPCODE             : out std_logic_vector(3 downto 0);  -- Opcode für ALU
+    w_e_decoder_memory : out std_logic;
+    w_e_regfile        : out std_logic;  -- write enable for Registerfile
+    w_e_SREG           : out std_logic_vector(7 downto 0);  -- einzeln Write_enables für SREG - Bits
+    offset_pc          : out std_logic_vector(11 downto 0);  -- the offset of the pc
 
     -- hier kommen noch die ganzen Steuersignale der Multiplexer...
-    sel_immediate     : out std_logic;  -- Selecteingang für Mux vor RF
-    alu_sel_immediate : out std_logic   -- selecteingang für mux vor ALU
+    regfile_datain_selector : out std_logic_vector(1 downto 0);  -- Selecteingang für Mux vor RF
+    alu_sel_immediate       : out std_logic  -- selecteingang für mux vor ALU
 
     );
 end decoder;
@@ -66,14 +64,15 @@ begin  -- Behavioral
     -- Etwas muss man hier schon nachdenken und sich die Operationen genau ansehen...
 
     -- Vorzuweisung der Signale, um Latches zu verhindern
-    addr_opa          <= "00000";
-    addr_opb          <= "00000";
-    OPCODE            <= op_NOP;
-    w_e_regfile       <= '0';
-    w_e_SREG          <= "00000000";
-    sel_immediate     <= '0';
-    alu_sel_immediate <= '0';
-    offset_pc         <= "000000000000";
+    addr_opa                <= "00000";
+    addr_opb                <= "00000";
+    OPCODE                  <= op_NOP;
+    w_e_regfile             <= '0';
+    w_e_SREG                <= "00000000";
+    regfile_datain_selector <= regfile_data_in_alu;
+    alu_sel_immediate       <= '0';
+    offset_pc               <= "000000000000";
+    w_e_decoder_memory      <= '0';
 
     index_branches := to_integer(unsigned(Instr(2 downto 0)));
 
@@ -116,7 +115,6 @@ begin  -- Behavioral
       -- BRBS
       when "111100" =>
         if sreg(to_integer(unsigned(Instr(2 downto 0)))) = '1' then
-          offset_pc <= "00000" & Instr(9 downto 3); 
           offset_pc <= std_logic_vector(resize(signed(Instr(9 downto 3)), offset_pc'length));
         end if;
       -- BRBC
@@ -124,18 +122,15 @@ begin  -- Behavioral
         if sreg(to_integer(unsigned(Instr(2 downto 0)))) = '0' then
           offset_pc <= std_logic_vector(resize(signed(Instr(9 downto 3)), offset_pc'length));
         end if;
-      -- LD (Z)
-      when "100000" =>
-        null;
       when others =>
         case Instr(15 downto 12) is  -- instructions that are coded on the first
           -- 4 bytes
           -- LDI
           when "1110" =>
-            addr_opa      <= '1' & Instr(7 downto 4);
-            w_e_regfile   <= '1';
-            w_e_SREG      <= "00000000";
-            sel_immediate <= '1';
+            addr_opa                <= '1' & Instr(7 downto 4);
+            w_e_regfile             <= '1';
+            w_e_SREG                <= "00000000";
+            regfile_datain_selector <= regfile_data_in_instruction;
           -- SUBI
           when "0101" =>
             addr_opa          <= '1' & Instr(7 downto 4);
@@ -143,13 +138,15 @@ begin  -- Behavioral
             w_e_regfile       <= '1';
             w_e_SREG          <= "00111111";
             alu_sel_immediate <= '1';
-          when "0110" =>                -- ORI
+          -- ORI
+          when "0110" =>
             addr_opa          <= '1' & Instr(7 downto 4);
             OPCODE            <= op_or;
             w_e_regfile       <= '1';
             w_e_SREG          <= "00011110";
             alu_sel_immediate <= '1';
-          when "0111" =>                -- ANDI
+          -- ANDI
+          when "0111" =>
             addr_opa          <= '1' & Instr(7 downto 4);
             OPCODE            <= op_and;
             w_e_regfile       <= '1';
@@ -186,6 +183,15 @@ begin  -- Behavioral
                   when others =>
                     null;               -- Ici, com asr 
                 end case;
+              -- LD Z
+              when "1000000" =>
+                addr_opa                <= Instr(8 downto 4);
+                regfile_datain_selector <= regfile_data_in_memory;
+                w_e_regfile             <= '1';
+              -- ST Z
+              when "1000001" =>
+                addr_opa           <= Instr(8 downto 4);
+                w_e_decoder_memory <= '1';
               when others =>
                 null;
             end case;
