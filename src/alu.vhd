@@ -108,7 +108,7 @@ begin
       when op_lsr =>
         n <= '0';
         c <= OPA(0);
-        v <= n and c;
+        -- TODO v <= n and c;
 
       when others => null;
     end case;

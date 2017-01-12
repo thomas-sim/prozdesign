@@ -6,7 +6,7 @@
 -- Author     : Burkart Voss  <bvoss@Troubadix>
 -- Company    : 
 -- Created    : 2015-06-23
--- Last update: 2016-11-24
+-- Last update: 2017-01-12
 -- Platform   : 
 -- Standard   : VHDL'87
 -------------------------------------------------------------------------------
@@ -54,7 +54,7 @@ begin  -- Behavioral
   -- type   : combinational
   -- inputs : Instr
   -- outputs: addr_opa, addr_opb, OPCODE, w_e_regfile, w_e_SREG, ...
-  dec_mux : process (Instr)
+  dec_mux : process (Instr, sreg)
     variable index_branches : integer := 0;
   begin  -- process dec_mux
 

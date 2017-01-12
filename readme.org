@@ -1,0 +1,44 @@
+* TODO Information about the project
+* Roadmap of the project
+** NEXT Functionning LEDs and switches
+** TODO Implementation of the seven segment display
+** TODO Modification of the way the stack is implemented
+*** TODO General change for the stack
+Right now, stacks and RET/CALL instructions are working, but the synthesis at
+the end isn't using the SRAM of the FPGA but is making everything with
+flip-flops.
+In order to make it right : follow the freaking SRAM template !
+**** DONE se documenter sur les différents types de SRAM ?
+**** DONE data_memory contient un sous-élément SRAM
+L'élément SRAM sera l'exacte copie du template SRAM
+*** TODO correct implementation of the jumps
+-> making it in two cycles ?
+** TODO Pipelines !
+* List of the instructions that should be implemented
+* Things learned in that project
+** switch to Emacs
+Having to use emacs after having been converted to vim wasn't so easy at first,
+but I think that I have now adopted Emacs, maybe even for good ! Well, a
+totally Vim flavored emacs (thank you my dear Evil !) but still, Emacs.
+** Git !
+ - intensive usage of git during the project
+ - seeing the utility of branches, stashes and regular commits even for a solo
+project
+** VHDL
+Obviously, a lot of VHDL is learned with this project !
+*** Software vs Hardware engineering
+When developping on hardware, always have in mind how the hardware will be
+generated and that means trying to stick to templates and do NOT try to tweak
+them. Tweaks should go arouuuuund !
+** General programming skills
+*** New features developpement cycle
+This project is making me realise how much the cycle =implement -> test ->
+debug -> commit= is important and efficient. I still have much trouble applying
+it for big new features.
+
+For exemple : adding the instructions LD/ST. A lot of changes had to be done
+before a actual test could be done (especially the changes in top_level.vhd
+that always demands a lot of attention).
+
+A solution could be to right a short test-bench in order to be able to test the
+specific developped component.

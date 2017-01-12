@@ -20,11 +20,9 @@ architecture Behavioral of decoder_memory is
 begin
   dec_memory_mux : process (index_z, w_e_decoder_memory)
     variable id_port : std_logic_vector(3 downto 0) := "0000";
-    
   begin
     w_e_memory <= "0000";
     addr_memory <= "0000000000";
-    memory_output_selector <= "0000";
 
     if unsigned(index_z) >= unsigned(addr_first_memory)
       and unsigned(index_z) <= unsigned(addr_last_memory) then
