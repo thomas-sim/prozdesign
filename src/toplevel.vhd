@@ -76,7 +76,7 @@ architecture Behavioral of toplevel is
   signal OPCODE             : std_logic_vector(3 downto 0);
   signal w_e_regfile        : std_logic;
   signal w_e_decoder_memory : std_logic;
-  signal w_e_SREG_dec       : std_logic_vector(7 downto 0);
+  signal w_e_SREG       : std_logic_vector(7 downto 0);
   signal offset_pc          : std_logic_vector(11 downto 0);
 
   signal regfile_datain_selector : std_logic_vector(1 downto 0);
@@ -121,7 +121,7 @@ architecture Behavioral of toplevel is
   signal seg1       : std_logic_vector(7 downto 0);
   signal seg2       : std_logic_vector(7 downto 0);
   signal seg3       : std_logic_vector(7 downto 0);
-  signal seg_enable : std_logic_vector(7 downto 0);
+  signal local_seg_enable : std_logic_vector(7 downto 0);
 
 
   -----------------------------------------------------------------------------
@@ -240,7 +240,7 @@ begin
       offset_pc               => offset_pc,
       w_e_regfile             => w_e_regfile,
       w_e_decoder_memory      => w_e_decoder_memory,
-      w_e_SREG                => w_e_SREG_dec,
+      w_e_SREG                => w_e_SREG,
       alu_sel_immediate       => alu_sel_immediate,
       regfile_datain_selector => regfile_datain_selector);
 
@@ -353,7 +353,7 @@ begin
     port map (
       clk        => clk,
       reset      => reset,
-      data_out   => seg_enable,
+      data_out   => local_seg_enable,
       w_e_memory => w_e_memory,
       data_in    => data_opa);
 
@@ -410,11 +410,9 @@ begin
       if reset = '1' then
         sreg <= "00000000";
       else
-        sreg <= (not(w_e_SREG_dec) and sreg) or (w_e_SREG_dec and status_alu);
+        sreg <= (not(w_e_SREG) and sreg) or (w_e_SREG and status_alu);
       end if;
     end if;
   end process sreg_process;
 
-  Status   <= status_alu;
-  w_e_SREG <= w_e_SREG_dec;
 end Behavioral;

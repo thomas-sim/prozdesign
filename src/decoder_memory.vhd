@@ -25,7 +25,7 @@ begin
   begin
     w_e_memory <= "0000";
     addr_memory <= "0000000000";
-    id_port     := "0000";
+    -- id_port     := "0000";
 
     case index_z is
       when addr_pind =>

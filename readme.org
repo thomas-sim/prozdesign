@@ -6,13 +6,13 @@
 ** NEXT Functionning LEDs and switches
 *** DONE modification .xdc
 *** DONE création ports.vhd
-*** NEXT modification decoder_memory
+*** DONE modification decoder_memory
 - pind = boutons = "000" & btnR & btnU & btnD & btnL & btnEnter;
 - pinc = switches de 15 à 8
 - pinb = switches de 7 à 0
 - portc = led de 15 à 8
 - portb = led de 7 à 0
-*** NEXT modification top_level
+*** DONE modification top_level
 ** TODO Implementation of the seven segment display
 ** TODO Modification of the way the stack is implemented
 *** TODO General change for the stack
