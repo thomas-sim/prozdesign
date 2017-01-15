@@ -404,6 +404,7 @@ begin
     end case;
   end process memory_output_mux;
 
+  -- sreg updating process
   sreg_process : process (clk)
   begin
     if clk'event and clk = '1' then
@@ -414,5 +415,46 @@ begin
       end if;
     end if;
   end process sreg_process;
+
+  -- seven segment utility
+  set_segs:process(clk)
+    variable segen_local : std_logic_vector(3 downto 0) := "0001";
+    
+  begin
+    if clk'event and clk = '1' then
+      if clk_div = '1' then
+        
+        -- shifting segen_local to the left
+        for i in 3 downto 1 loop
+          segen_local(i) := segen_local(i-1);
+        end loop;
+        segen_local(0) := '0';
+        if segen_local = "0000" then
+          segen_local := "0001";
+        end if;
+        
+        segen <= not segen_local;
+
+        --case segen_local is
+        --  when "0001" => segcont_reg <= seg0;
+        --  when "0010" => segcont_reg <= seg1;
+        --  when "0100" => segcont_reg <= seg2;
+        --  when "1000" => segcont_reg <= seg3;
+        --  when others => segcont_reg <= (others => '0');
+        --end case;
+        
+        case segen_local is
+          when "0001" => seg <= not seg0;
+          when "0010" => seg <= not seg1;
+          when "0100" => seg <= not seg2;
+          when "1000" => seg <= not seg3;
+          when others => seg <= (others => '0');
+        end case;
+
+        -- segcont <= not segcont_reg;
+      end if;
+    end if;
+  end process;
+
 
 end Behavioral;
