@@ -1,7 +1,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 -- ---------------------------------------------------------------------------------
--- Memory initialisation package from input file : test_ports.hex
+-- Memory initialisation package from input file : seven_display.hex
 -- ---------------------------------------------------------------------------------
 package pkg_instrmem is
 

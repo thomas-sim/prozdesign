@@ -322,7 +322,7 @@ begin
     port map (
       clk        => clk,
       reset      => reset,
-      data_out   => seg0,
+      data_out   => seg1,
       w_e_memory => w_e_memory,
       data_in    => data_opa);
 
