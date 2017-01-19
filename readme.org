@@ -37,12 +37,14 @@ Push & pop instruction
 *** DONE decoder_memory (use code from old_master)
 - [X] stack enable -> memory is chosen from multiplexor
 - [X] gestion du SP
-*** TODO top level
+*** DONE top level
  - [X] modifier decoder
  - [X] modifier decoder_memory
- - [ ] synthesis ?
+ - [X] synthesis ?
+   Bug in synthesis (similar to what I had before the huge refactoring of my code : the problem was an incorrect port declaration)
+   Moral of the story : beware of the fucking warnings !
 *** TODO test simulation + test ASM
-- [ ] simulation "de base"
+- [X] simulation "de base"
 - [ ] écrire asm qui push 1, 2, 3, etc dans la stack et pop à chaque fois qu'on appuie sur un bouton
 - [ ] tester sur hardware
 *** TODO améliorations
@@ -58,7 +60,7 @@ totally Vim flavored emacs (thank you my dear Evil !) but still, Emacs.
 ** Git !
  - intensive usage of git during the project
  - seeing the utility of branches, stashes and regular commits even for a solo
-project
+ project
 ** VHDL
 Obviously, a lot of VHDL is learned with this project !
 *** Software vs Hardware engineering
