@@ -1,9 +1,12 @@
+#+STARTUP: content
+#+STARTUP: indent
+
 * TODO Information about the project
 * Roadmap of the project
 ** DONE implementation correcte du sreg
 *** DONE toplevel
 *** DONE changement en tête decodeur
-** NEXT Functionning LEDs and switches
+** DONE Functionning LEDs and switches
 *** DONE modification .xdc
 *** DONE création ports.vhd
 *** DONE modification decoder_memory
@@ -15,7 +18,7 @@
 *** DONE modification top_level
 ** TODO Implementation of the seven segment display
 ** TODO Modification of the way the stack is implemented
-*** TODO General change for the stack
+*** DONE General change for the stack
 Right now, stacks and RET/CALL instructions are working, but the synthesis at
 the end isn't using the SRAM of the FPGA but is making everything with
 flip-flops.
@@ -25,6 +28,19 @@ In order to make it right : follow the freaking SRAM template !
 L'élément SRAM sera l'exacte copie du template SRAM
 *** TODO correct implementation of the jumps
 -> making it in two cycles ?
+WTF do I mean by that ?
+** TODO implementation of the stack
+Push & pop instruction
+*** DONE Decoder (use code from old_master)
+- [X] signaux en sortie : stack_enable
+- [X] set right output register
+*** TODO decoder_memory (use code from old_master)
+- [ ] stack enable -> memory is chosen from multiplexor
+- [ ] gestion du SP
+*** TODO top level
+- [ ] modifier decoder
+- [ ] modifier decoder_memory
+** TODO implementation of RJMP
 ** TODO Pipelines !
 * List of the instructions that should be implemented
 * Things learned in that project
