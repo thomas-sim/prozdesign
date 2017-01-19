@@ -34,12 +34,18 @@ Push & pop instruction
 *** DONE Decoder (use code from old_master)
 - [X] signaux en sortie : stack_enable
 - [X] set right output register
-*** TODO decoder_memory (use code from old_master)
-- [ ] stack enable -> memory is chosen from multiplexor
-- [ ] gestion du SP
+*** DONE decoder_memory (use code from old_master)
+- [X] stack enable -> memory is chosen from multiplexor
+- [X] gestion du SP
 *** TODO top level
 - [ ] modifier decoder
 - [ ] modifier decoder_memory
+*** TODO test simulation + test ASM
+- [ ] simulation "de base"
+- [ ] écrire asm qui push 1, 2, 3, etc dans la stack et pop à chaque fois qu'on appuie sur un bouton
+- [ ] tester sur hardware
+*** TODO améliorations
+- [ ] se débarrasser de al variable local_stack_pointer ?
 ** TODO implementation of RJMP
 ** TODO Pipelines !
 * List of the instructions that should be implemented
