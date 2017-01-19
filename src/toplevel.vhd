@@ -78,6 +78,7 @@ architecture Behavioral of toplevel is
   signal w_e_decoder_memory : std_logic;
   signal w_e_SREG       : std_logic_vector(7 downto 0);
   signal offset_pc          : std_logic_vector(11 downto 0);
+  signal stack_enable : std_logic;
 
   signal regfile_datain_selector : std_logic_vector(1 downto 0);
   signal alu_sel_immediate       : std_logic;
@@ -155,8 +156,12 @@ architecture Behavioral of toplevel is
     port (
       index_z                : in  std_logic_vector(15 downto 0);
       w_e_decoder_memory     : in  std_logic;
-      w_e_memory             : out std_logic_vector(3 downto 0);
+      clk                    : in  std_logic;
+      reset                  : in  std_logic;
+      stack_enable           : in  std_logic;
+      function_call          : in  std_logic;
       memory_output_selector : out std_logic_vector (3 downto 0);
+      w_e_memory             : out std_logic_vector(3 downto 0);
       addr_memory            : out std_logic_vector(9 downto 0));
   end component decoder_memory;
 
@@ -177,10 +182,11 @@ architecture Behavioral of toplevel is
       sreg                    : in  std_logic_vector(7 downto 0);
       addr_opa                : out std_logic_vector(4 downto 0);
       addr_opb                : out std_logic_vector(4 downto 0);
-      OPCODE                  : out std_logic_vector(3 downto 0);
-      w_e_decoder_memory      : out std_logic;
       w_e_regfile             : out std_logic;
+      OPCODE                  : out std_logic_vector(3 downto 0);
       w_e_SREG                : out std_logic_vector(7 downto 0);
+      stack_enable            : out std_logic;
+      w_e_decoder_memory      : out std_logic;
       offset_pc               : out std_logic_vector(11 downto 0);
       regfile_datain_selector : out std_logic_vector(1 downto 0);
       alu_sel_immediate       : out std_logic);
@@ -229,22 +235,22 @@ begin
       Instr => Instr);
 
   -- instance "decoder_1"
-  decoder_1 : decoder
+  decoder_2: entity work.decoder
     port map (
       Instr                   => Instr,
       sreg                    => sreg,
       addr_opa                => addr_opa,
       addr_opb                => addr_opb,
-      OPCODE                  => OPCODE,
-      offset_pc               => offset_pc,
       w_e_regfile             => w_e_regfile,
-      w_e_decoder_memory      => w_e_decoder_memory,
+      OPCODE                  => OPCODE,
       w_e_SREG                => w_e_SREG,
-      alu_sel_immediate       => alu_sel_immediate,
-      regfile_datain_selector => regfile_datain_selector);
+      stack_enable            => stack_enable,
+      w_e_decoder_memory      => w_e_decoder_memory,
+      offset_pc               => offset_pc,
+      regfile_datain_selector => regfile_datain_selector,
+      alu_sel_immediate       => alu_sel_immediate);
 
   -- instance "Reg_File_1"
-
   Reg_File_1 : Reg_File
     port map (
       clk         => clk,
@@ -267,10 +273,14 @@ begin
       Status => status_alu);
 
   -- instance "decoder_memory_1"
-  decoder_memory_1 : decoder_memory
+  decoder_memory_2: entity work.decoder_memory
     port map (
       index_z                => index_z,
       w_e_decoder_memory     => w_e_decoder_memory,
+      clk                    => clk,
+      reset                  => reset,
+      stack_enable           => stack_enable,
+      function_call          => '0',
       memory_output_selector => memory_output_selector,
       w_e_memory             => w_e_memory,
       addr_memory            => addr_memory);

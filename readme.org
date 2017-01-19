@@ -38,8 +38,9 @@ Push & pop instruction
 - [X] stack enable -> memory is chosen from multiplexor
 - [X] gestion du SP
 *** TODO top level
-- [ ] modifier decoder
-- [ ] modifier decoder_memory
+ - [X] modifier decoder
+ - [X] modifier decoder_memory
+ - [ ] synthesis ?
 *** TODO test simulation + test ASM
 - [ ] simulation "de base"
 - [ ] écrire asm qui push 1, 2, 3, etc dans la stack et pop à chaque fois qu'on appuie sur un bouton
