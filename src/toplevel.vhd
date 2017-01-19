@@ -145,7 +145,6 @@ architecture Behavioral of toplevel is
   component data_memory is
     port (
       clk        : in  std_logic;
-      reset      : in  std_logic;
       w_e_memory : in  std_logic_vector(3 downto 0);
       data_in    : in  std_logic_vector(7 downto 0);
       addr       : in  std_logic_vector (9 downto 0);
@@ -235,7 +234,7 @@ begin
       Instr => Instr);
 
   -- instance "decoder_1"
-  decoder_2: entity work.decoder
+  decoder_1: entity work.decoder
     port map (
       Instr                   => Instr,
       sreg                    => sreg,
@@ -273,7 +272,7 @@ begin
       Status => status_alu);
 
   -- instance "decoder_memory_1"
-  decoder_memory_2: entity work.decoder_memory
+  decoder_memory_1: entity work.decoder_memory
     port map (
       index_z                => index_z,
       w_e_decoder_memory     => w_e_decoder_memory,
@@ -289,7 +288,6 @@ begin
   data_memory_1 : data_memory
     port map (
       clk        => clk,
-      reset      => reset,
       w_e_memory => w_e_memory,
       data_in    => data_opa,
       addr       => addr_memory,
