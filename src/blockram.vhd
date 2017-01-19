@@ -46,8 +46,8 @@ architecture Behavioral of blockram is
   type memslot is array(1023 downto 0) of std_logic_vector(7 downto 0);
   signal memory : memslot := (others => (others => '0'));
 
-  attribute ram_style        : string;
-  attribute ram_style of memory : signal is "block";
+  --attribute ram_style        : string;
+  --attribute ram_style of memory : signal is "block";
 begin
 
   process(clk)
